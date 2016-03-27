@@ -1,6 +1,7 @@
 package me.arianvp.time;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.corba.se.impl.encoding.CodeSetConversion;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -18,8 +19,9 @@ public class TimeConfiguration extends Configuration {
     @NotNull
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
-    @NotEmpty
-    private String jwtTokenSecret;
+    @NotNull
+    private String secretKey;
+
 
     @JsonProperty("database")
     public DataSourceFactory getDataSourceFactory() {
@@ -31,13 +33,11 @@ public class TimeConfiguration extends Configuration {
         this.dataSourceFactory = dataSourceFactory;
     }
 
-    @JsonProperty("jwt-token-secret")
-    public String getJwtTokenSecret() {
-        
-        return jwtTokenSecret;
+    public String getSecretKey() {
+        return secretKey;
     }
 
-    public void setJwtTokenSecret(String jwtTokenSecret) {
-        this.jwtTokenSecret = jwtTokenSecret;
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 }

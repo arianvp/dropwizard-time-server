@@ -11,6 +11,7 @@ import me.arianvp.time.db.UserDao;
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.crypto.SecretKey;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
@@ -48,11 +49,11 @@ public class TokenResource {
     @POST
     public String newToken(Login login) {
 
-        User user = dao.getUserByName(login.getUsername());
+        User user = dao.getUserByName(login.getName());
 
         if (BCrypt.checkpw(login.getPassword(), user.getPassword())) {
             return builder
-                    .setSubject(login.getUsername())
+                    .setSubject(login.getName())
                     .compact();
         } else {
             throw new WebApplicationException("Invalid username or password", Response.Status.UNAUTHORIZED);
@@ -64,7 +65,7 @@ public class TokenResource {
      * @return a new unexpired token
      */
     @Path("/renew")
-    @POST
+    @GET
     public String renewToken(@Auth User user) {
         return builder.setSubject(user.getName()).compact();
     }

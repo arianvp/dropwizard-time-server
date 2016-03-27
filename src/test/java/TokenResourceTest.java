@@ -57,8 +57,8 @@ public class TokenResourceTest {
         when(dao.getUserByName("username")).thenReturn(user);
         Login login = new Login("username", "password");
         String token = resource.newToken(login);
-        verify(dao).getUserByName(login.getUsername());
-        parser.requireSubject(login.getUsername()).parse(token);
+        verify(dao).getUserByName(login.getName());
+        parser.requireSubject(login.getName()).parse(token);
     }
 
     @Test

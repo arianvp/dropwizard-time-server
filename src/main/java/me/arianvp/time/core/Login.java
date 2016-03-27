@@ -4,24 +4,24 @@ package me.arianvp.time.core;
  * Created by arian on 3/27/16.
  */
 public class Login {
-    private String username;
+    private String name;
     private String password;
 
     public Login() {
 
     }
 
-    public Login(String username, String password) {
-        this.username = username;
+    public Login(String name, String password) {
+        this.name = name;
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
+    public String getName() {
+        return name;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPassword() {
