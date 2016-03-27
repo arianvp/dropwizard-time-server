@@ -1,4 +1,4 @@
-package me.arianvp.time;
+package me.arianvp.time.resources;
 
 import com.codahale.metrics.annotation.Timed;
 

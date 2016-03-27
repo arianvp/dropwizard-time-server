@@ -3,6 +3,7 @@ package me.arianvp.time;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.activation.DataSource;
 import javax.validation.Valid;
@@ -17,6 +18,9 @@ public class TimeConfiguration extends Configuration {
     @NotNull
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
+    @NotEmpty
+    private String jwtTokenSecret;
+
     @JsonProperty("database")
     public DataSourceFactory getDataSourceFactory() {
         return dataSourceFactory;
@@ -25,5 +29,15 @@ public class TimeConfiguration extends Configuration {
     @JsonProperty("database")
     public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
         this.dataSourceFactory = dataSourceFactory;
+    }
+
+    @JsonProperty("jwt-token-secret")
+    public String getJwtTokenSecret() {
+        
+        return jwtTokenSecret;
+    }
+
+    public void setJwtTokenSecret(String jwtTokenSecret) {
+        this.jwtTokenSecret = jwtTokenSecret;
     }
 }

@@ -1,14 +1,23 @@
 package me.arianvp.time;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.dropwizard.Application;
+import io.dropwizard.java8.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.java8.Java8Bundle;
+import io.dropwizard.java8.auth.oauth.OAuthCredentialAuthFilter;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import me.arianvp.time.auth.JwtAuthenticator;
+import me.arianvp.time.core.User;
+import me.arianvp.time.db.UserDao;
 import org.skife.jdbi.v2.DBI;
+import me.arianvp.time.resources.TimeResource;
+import me.arianvp.time.resources.UserResource;
 
 /**
  * Created by arian on 3/26/16.
@@ -17,6 +26,12 @@ public class TimeApplication extends Application<TimeConfiguration>{
 
     @Override
     public void initialize(Bootstrap<TimeConfiguration> bootstrap) {
+        bootstrap.addBundle(new MigrationsBundle<TimeConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(TimeConfiguration configuration) {
+                return configuration.getDataSourceFactory();
+            }
+        });
         bootstrap.addBundle(new Java8Bundle());
         bootstrap.getObjectMapper()
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -26,10 +41,19 @@ public class TimeApplication extends Application<TimeConfiguration>{
     @Override
     public void run(TimeConfiguration config, Environment environment) throws Exception {
         final DBIFactory factory = new DBIFactory();
-        final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "sqlite");
+        final DBI dbi = factory.build(environment, config.getDataSourceFactory(), "sqlite");
+        final UserDao userDao = dbi.onDemand(UserDao.class);
 
         final JerseyEnvironment jersey = environment.jersey();
+
+        final OAuthCredentialAuthFilter<User> authFilter = new OAuthCredentialAuthFilter.Builder<User>()
+                .setAuthenticator(new JwtAuthenticator())
+                .buildAuthFilter();
+
+        jersey.register(new AuthDynamicFeature(authFilter));
+        jersey.register(new AuthValueFactoryProvider.Binder<>(User.class));
         jersey.register(new TimeResource(java.time.Clock.systemUTC()));
+        jersey.register(new UserResource(userDao));
     }
 
     @Override

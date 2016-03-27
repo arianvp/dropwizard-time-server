@@ -1,8 +1,6 @@
-import me.arianvp.time.TimeResource;
+import me.arianvp.time.resources.TimeResource;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
